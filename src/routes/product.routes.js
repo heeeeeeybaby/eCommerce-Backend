@@ -1,13 +1,11 @@
 import { Router } from 'express';
-import { ProductManager } from '../../ProductManager';
+import { ProductManager } from '../../ProductManager.js';
 
-const productManager = new ProductManager('../ProductManager.js'); 
+const productManager = new ProductManager('./productos.txt'); 
+console.log(productManager.getProducts()); 
+const productRouter = Router(); 
 
-app.get('/', (req, res) => {
-    res.send("Mi primer servidor con express")
-})
-
-app.get("/product", async (req, res) => {
+productRouter.get("/", async (req, res) => {
     try {
         const products = await productManager.getProducts();
         const limit = req.query.limit; 
@@ -20,32 +18,31 @@ app.get("/product", async (req, res) => {
         }
         } catch (error) {
             console.log(error);
-            res.send("Error")
+            res.send("Error al traer los productos")
     }
 });
-app.get('/products/:pid', async (req, res) => {
+productRouter.get('/:pid', async (req, res) => {
     try {
         const productId = req.params.pid;
         const product = await productManager.getProductById(productId);
       if (!product) { // Si no se encontró el producto
-        res.send('Product not found');
+        res.send('Producto no encontrado');
         } else {
         res.send(product);
         }
     } catch (error) {
         console.log(error);
-        res.send('Internal server error');
+        res.send('Error en la consulta');
     }
   });
 
-
-app.post("/product", async (req, res) => {
+productRouter.post("/", async (req, res) => {
     const { title, description, price, thumbnail, code, stock } = req.body;
     await productManager.addProduct({ title, description, price, thumbnail, code, stock })
     res.send("Producto creado");
 })
 
-app.put("/product/:id", async (req, res) => {
+productRouter.put("/:id", async (req, res) => {
     const id = req.params.id
     const { title, description, price, thumbnail, code, stock } = req.body
 
@@ -54,11 +51,10 @@ app.put("/product/:id", async (req, res) => {
     res.send(mensaje)
 })
 
-app.delete("/product/:id", async (req, res) => {
+productRouter.delete("/:id", async (req, res) => {
     const id = req.params.id
     const mensaje = await productManager.deleteProduct(id)
     res.send(mensaje)
 })
-app.listen(PORT, () => {
-    console.log(`Server on port ${PORT}`)
-})
+
+export default productRouter; 

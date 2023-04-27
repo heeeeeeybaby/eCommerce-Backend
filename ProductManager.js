@@ -1,4 +1,4 @@
-import { promises as fs } from 'fs'
+import { promises as fs } from 'fs';
 
 export class ProductManager {
     constructor(path) {
@@ -17,13 +17,15 @@ export class ProductManager {
     async addProduct(producto) {
         const prodsJSON = await fs.readFile(this.path, 'utf-8')
         const prods = JSON.parse(prodsJSON)
-        if (prods.some(prod => prod.code === producto.code)) {
+        if (prods.some(prod => prod.code == producto.code)) {
+            console.log("Soa Bachelé haga argo!")
             return "Producto ya existe"
         } else {
+            console.log(prods.some(prod => prod.code === producto.code));
             producto.id = ProductManager.incrementarID()
             prods.push(producto)
             await fs.writeFile(this.path, JSON.stringify(prods))
-            return "Producto creado"
+            
         }
     }
 
