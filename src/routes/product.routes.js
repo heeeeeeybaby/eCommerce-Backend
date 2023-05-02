@@ -21,6 +21,17 @@ productRouter.get("/", async (req, res) => {
             res.send("Error al traer los productos")
     }
 });
+
+productRouter.get("/realtimeproducts", async (req, res) => {
+    try {
+        const products = await productManager.getProducts();
+        res.render('realtimeproducts', { products }) 
+
+        } catch (error) {
+            console.log(error);
+            res.send("Error")
+    }
+});
 productRouter.get('/:pid', async (req, res) => {
     try {
         const productId = req.params.pid;
@@ -28,7 +39,15 @@ productRouter.get('/:pid', async (req, res) => {
       if (!product) { // Si no se encontró el producto
         res.send('Producto no encontrado');
         } else {
-        res.send(product);
+            res.render('product', {
+                title: product.title,
+                description: product.description,
+                price: product.price,
+                code: product.code,
+                stock: product.stock
+        
+            })
+/*res.send(product); */
         }
     } catch (error) {
         console.log(error);
@@ -39,7 +58,8 @@ productRouter.get('/:pid', async (req, res) => {
 productRouter.post("/", async (req, res) => {
     const { title, description, category, price, thumbnail, code, stock, status } = req.body;
     const productoCreado = await productManager.addProduct({ title, description, category, price, thumbnail, code, stock, status })
-    res.send(productoCreado);
+    req.io.emit("mensaje", "Hola")
+
 })
 
 productRouter.put("/:id", async (req, res) => {
