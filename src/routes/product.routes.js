@@ -34,19 +34,19 @@ productRouter.get('/:pid', async (req, res) => {
         console.log(error);
         res.send('Error en la consulta');
     }
-  });
+    });
 
 productRouter.post("/", async (req, res) => {
-    const { title, description, price, thumbnail, code, stock } = req.body;
-    await productManager.addProduct({ title, description, price, thumbnail, code, stock })
-    res.send("Producto creado");
+    const { title, description, category, price, thumbnail, code, stock, status } = req.body;
+    const productoCreado = await productManager.addProduct({ title, description, category, price, thumbnail, code, stock, status })
+    res.send(productoCreado);
 })
 
 productRouter.put("/:id", async (req, res) => {
     const id = req.params.id
-    const { title, description, price, thumbnail, code, stock } = req.body
+    const { title, description, category, price, thumbnail, code, stock, status } = req.body
 
-    const mensaje = await productManager.updateProduct(id, { title, description, price, thumbnail, code, stock })
+    const mensaje = await productManager.updateProduct(id, { title, description, category, price, thumbnail, code, stock, status })
 
     res.send(mensaje)
 })

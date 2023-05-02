@@ -18,14 +18,12 @@ export class ProductManager {
         const prodsJSON = await fs.readFile(this.path, 'utf-8')
         const prods = JSON.parse(prodsJSON)
         if (prods.some(prod => prod.code == producto.code)) {
-            console.log("Soa Bachelé haga argo!")
-            return "Producto ya existe"
+            return "Este producto ya existe, intenta otro código"
         } else {
-            console.log(prods.some(prod => prod.code === producto.code));
             producto.id = ProductManager.incrementarID()
             prods.push(producto)
             await fs.writeFile(this.path, JSON.stringify(prods))
-            
+            return "¡Nuevo producto creado!"
         }
     }
 
@@ -44,17 +42,19 @@ export class ProductManager {
         }
     }
 
-    async updateProduct(id, { title, description, price, thumbnail, code, stock }) {
+    async updateProduct(id, { title, description, category, price, thumbnail, code, stock, status }) {
         const prodsJSON = await fs.readFile(this.path, 'utf-8')
         const prods = JSON.parse(prodsJSON)
         if (prods.some(prod => prod.id === parseInt(id))) {
             let index = prods.findIndex(prod => prod.id === parseInt(id))
             prods[index].title = title
             prods[index].description = description
+            prods[index].category = category
             prods[index].price = price
             prods[index].thumbnail = thumbnail
             prods[index].code = code
             prods[index].stock = stock
+            prods[index].status = status
             await fs.writeFile(this.path, JSON.stringify(prods))
             return "Producto actualizado"
         } else {

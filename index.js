@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended:true}))
 const upload = (multer({ storage: storage })); 
 
 //Rutas
-app.use('/static', express.static(__dirname + '/public'));
+app.use('./static', express.static(__dirname + '/public'));
 app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
