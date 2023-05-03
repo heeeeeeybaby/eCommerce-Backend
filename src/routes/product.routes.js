@@ -13,8 +13,9 @@ productRouter.get("/", async (req, res) => {
             //se utiliza el método slice() para devolver solo los primeros X productos especificados por el parámetro limit.
             const slicedProducts = products.slice(0, limit);
             res.send({ products: slicedProducts });
+        
         } else {
-            res.send({ products });
+            res.render('product', { products });
         }
         } catch (error) {
             console.log(error);

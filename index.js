@@ -57,8 +57,8 @@ app.use('/api/products', productRouter);
 app.use('/api/carts', cartRouter);
 
 app.get('/', (req, res) => {
-    res.render('home', {
-        mensaje: "Hola Mundo"
+    res.render('index', {
+        pageTitle: "Tienda"
     })
 })
 
