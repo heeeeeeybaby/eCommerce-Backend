@@ -58,7 +58,7 @@ productRouter.get('/:pid', async (req, res) => {
 productRouter.post("/", async (req, res) => {
     const { title, description, category, price, thumbnail, code, stock, status } = req.body;
     const productoCreado = await productManager.addProduct({ title, description, category, price, thumbnail, code, stock, status })
-    req.io.emit("mensaje", "Hola")
+    res.io.emit("mensaje", "Hola")
 
 })
 

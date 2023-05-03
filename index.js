@@ -3,8 +3,9 @@ import multer from 'multer';
 import productRouter from './src/routes/product.routes.js';
 import cartRouter from  './src/routes/cart.routes.js';
 import { __dirname } from './path.js';
-import { engine } from 'express-handlebars'
-import { Server } from 'socket.io'
+import { engine } from 'express-handlebars';
+import { Server } from 'socket.io';
+import * as path from 'path';
 
 
 //Configuracion de express
@@ -19,33 +20,36 @@ const storage = multer.diskStorage({
     }
 });
 
-app.engine('handlebars', engine()) //Voy a trabajar con handlebars
-app.set('view engine', 'handlebars') //Mis vistas son de hbs
-app.set('views', path.resolve(__dirname, './views')) //src/views path.resolve lo que hace es una concatenacion
+app.engine('handlebars', engine())
+app.set('view engine', 'handlebars') 
+app.set('views', path.resolve(__dirname, './views')) 
 
 
 //Middleware
 app.use(express.json())
 app.use(express.urlencoded({ extended:true}))
 const upload = (multer({ storage: storage })); 
+const server = app.listen(PORT, () => {
+    console.log(`Server on port ${PORT}`)
+})
 
 //ServerIO
-const io = new Server(server)
+const io = new Server(server, {cors: {origin: "*"}});
 const mensajes = []
 
 io.on('connection', (socket) => {
     console.log("Cliente conectado")
     socket.on("mensaje", info => {
         console.log(info)
-        mensajes.push(info)
-        io.emit("mensajes", mensajes) //Le envio todos los mensajes guardados
+/*         mensajes.push(info)
+        io.emit("mensajes", mensajes)  */
     })
 })
 
 //Acceso de io
 app.use((req, res, next) => {
     req.io = io; 
-    return next()
+    next();
 })
 
 //Rutas
@@ -65,10 +69,6 @@ app.post('/upload', upload.single('product'), (req, res) => {
     res.send("Imagen subida")
 }) 
 
-//Server
-app.listen(PORT, () => {
-    console.log(`Server on port ${PORT}`)
-})
 
 //HBS
 app.get("/", (req, res) => {
